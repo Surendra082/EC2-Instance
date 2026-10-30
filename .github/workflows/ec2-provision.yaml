@@ -3,6 +3,11 @@ name: ec2-instance-provision
 
 on:
   workflow_dispatch:
+    inputs:
+      myaction:
+        description: 'Action to perform (destroy or apply)'
+        required: true
+        default: 'apply'
 
 jobs:
   terraform:
@@ -33,6 +38,10 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      - name: Terraform Apply
+      - name: Terraform Apply 
+        if: ${{ github.event.inputs.myaction == 'apply' }}
         run: terraform apply -auto-approve
-  
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.myaction == 'destroy' }}
+        run: terraform destroy -auto-approve
